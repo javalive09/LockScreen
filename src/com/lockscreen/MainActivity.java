@@ -17,7 +17,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startService(new Intent(MainActivity.this, LockService.class));
         requestWindowFeature(Window.FEATURE_NO_TITLE); 
         Window win = getWindow();
         mWindowManager = getWindowManager();  
@@ -25,6 +24,8 @@ public class MainActivity extends Activity {
         params.flags |= WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
         mView = getLayoutInflater().inflate(R.layout.activity_main, null);
         addView();
+        
+        startService(new Intent(MainActivity.this, LockService.class));
     }
 
     private void addView() {

@@ -15,29 +15,35 @@ public class LockService extends Service {
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
-
 		return Service.START_STICKY;
-
 	}
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		IntentFilter mScreenOffFilter = new IntentFilter("android.intent.action.SCREEN_OFF");
-		registerReceiver(new BroadcastReceiver() {
+		registerReceiver(mScreenOffReceiver, mScreenOffFilter);
+	}
+	
+	BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
 
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				String action = intent.getAction();
-				if(action.equals("android.intent.action.SCREEN_OFF")) {
-					Intent in = new Intent(context, MainActivity.class);
-					in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					startActivity(in);
-				}
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if(action.equals("android.intent.action.SCREEN_OFF")) {
+				Intent in = new Intent(context, MainActivity.class);
+				in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(in);
 			}
-			
-		}, mScreenOffFilter);
+		}
+	};
+
+	@Override
+	public void onDestroy() {
+		unregisterReceiver(mScreenOffReceiver);
+		startService(new Intent(LockService.this, LockService.class));
 	}
 
+	
 	
 }
