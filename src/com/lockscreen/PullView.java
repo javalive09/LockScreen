@@ -1,11 +1,9 @@
 package com.lockscreen;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
@@ -15,10 +13,13 @@ import android.widget.Scroller;
 public class PullView extends FrameLayout {
 
 	private Scroller mScroller;
-	private int mTouchSlop;
+	private int mTouchSlop = 0;
 	private final static int TOUCH_STATE_REST = 0;
 	private final static int TOUCH_STATE_SCROLLING = 1;
 	private int mTouchState = TOUCH_STATE_REST;
+	private final static int LEN = 600;
+	private int mStartY = 0;
+	private int mDeltaY = 0;
 	
 	public PullView(Context context) {
 		super(context);
@@ -42,8 +43,6 @@ public class PullView extends FrameLayout {
 		invalidate();
 	}
 	
-	boolean needFinish = false;
-	
 	@Override
 	public void computeScroll() {
 
@@ -54,9 +53,6 @@ public class PullView extends FrameLayout {
 			invalidate();
 		}
 	}
-	
-	int mStartY = 0;
-	int mDeltaY = 0;
 	
     public boolean onInterceptTouchEvent(MotionEvent ev) {
     	Log.i("~peter", "onInterceptTouchEvent-");
@@ -94,12 +90,13 @@ public class PullView extends FrameLayout {
     	case MotionEvent.ACTION_MOVE:
     		mDeltaY = mStartY - currentY;
     		scrollTo(0, mDeltaY);
-    		float alpha = 1 - mDeltaY / 500;
+    		float alpha = 1 - mDeltaY / LEN;
     		setAlpha(alpha);
     		break;
     	case MotionEvent.ACTION_UP:
     		mTouchState = TOUCH_STATE_REST;
-    		if(mDeltaY > 500) {
+    		
+    		if(mDeltaY > LEN) {
 				MainActivity act = (MainActivity) getContext();
 				act.finish();
     		}else {
