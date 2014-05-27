@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
@@ -14,11 +15,12 @@ public class PullView extends ViewGroup {
 
 	private Scroller mScroller;
 	private int mTouchSlop = 0;
+	private VelocityTracker mVelocityTracker = null;
 	private static final int TOUCH_STATE_REST = 0;
 	private static final int TOUCH_STATE_SCROLLING = 1;
+	private static final int VELOCITY_BOUNDRY = -5000;
 	private int mTouchState = TOUCH_STATE_REST;
-	private static final int mAnimTime = 500;
-	private static final int LEN = 600;
+	private static final int mAnimTime = 600;
 	private boolean mFinish = false;
 	private int mChildHeight = 0;
 	private int mStartY = 0;
@@ -86,6 +88,10 @@ public class PullView extends ViewGroup {
     public boolean onTouchEvent(MotionEvent event) {
     	int action = event.getAction();
     	int currentY = (int) event.getY();
+    	if (mVelocityTracker == null) {
+			mVelocityTracker = VelocityTracker.obtain();
+		}
+		mVelocityTracker.addMovement(event);
     	switch(action) {
     	case MotionEvent.ACTION_DOWN:
     		mStartY = currentY;
@@ -99,13 +105,21 @@ public class PullView extends ViewGroup {
     		break;
     	case MotionEvent.ACTION_UP:
     		mTouchState = TOUCH_STATE_REST;
+			final VelocityTracker velocityTracker = mVelocityTracker;
+			velocityTracker.computeCurrentVelocity(1000);
+			int velocityY = (int) velocityTracker.getYVelocity();
     		
-    		if(mDeltaY > LEN) {
+    		if(velocityY < VELOCITY_BOUNDRY|| mDeltaY > mChildHeight/2) {
     			mFinish = true;
     			startBounceAnim(this.getScrollY(), mChildHeight - this.getScrollY(), mAnimTime);
     		}else {
     			startBounceAnim(this.getScrollY(), -this.getScrollY(), mAnimTime);
     		}
+    		
+    		if (mVelocityTracker != null) {
+				mVelocityTracker.recycle();
+				mVelocityTracker = null;
+			}
     		break;
     	}
 		return false;
@@ -124,6 +138,11 @@ public class PullView extends ViewGroup {
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		getChildAt(0).layout(l, t, r, b);
 		getChildAt(1).layout(l, t + mChildHeight, r, b + mChildHeight);
+	}
+	
+	public boolean dispatchTouchEvent(MotionEvent event) {
+		Log.i("peter", "event = " + event);
+		return super.dispatchTouchEvent(event);
 	}
 	
 }
