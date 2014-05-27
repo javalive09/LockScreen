@@ -5,21 +5,25 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
-import android.widget.FrameLayout;
 import android.widget.Scroller;
 
-public class PullView extends FrameLayout {
+public class PullView extends ViewGroup {
 
 	private Scroller mScroller;
 	private int mTouchSlop = 0;
-	private final static int TOUCH_STATE_REST = 0;
-	private final static int TOUCH_STATE_SCROLLING = 1;
+	private static final int TOUCH_STATE_REST = 0;
+	private static final int TOUCH_STATE_SCROLLING = 1;
 	private int mTouchState = TOUCH_STATE_REST;
-	private final static int LEN = 600;
+	private static final int mAnimTime = 500;
+	private static final int LEN = 600;
+	private boolean mFinish = false;
+	private int mChildHeight = 0;
 	private int mStartY = 0;
 	private int mDeltaY = 0;
+
 	
 	public PullView(Context context) {
 		super(context);
@@ -35,7 +39,6 @@ public class PullView extends FrameLayout {
     	Interpolator polator = new BounceInterpolator();
 		mScroller = new Scroller(getContext(), polator);
 		mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
-		setAlpha(1);
     }
 
 	public void startBounceAnim(int startY, int dy, int duration) {
@@ -51,6 +54,9 @@ public class PullView extends FrameLayout {
 			scrollTo(0, mScrollerY);
 			Log.i("~peter", "mScrollerY=" + mScrollerY);
 			invalidate();
+		}else if(mFinish) {
+			MainActivity act = (MainActivity) getContext();
+			act.finish();
 		}
 	}
 	
@@ -76,7 +82,7 @@ public class PullView extends FrameLayout {
     	}
         return mTouchState != TOUCH_STATE_REST;
     }
-    
+   
     public boolean onTouchEvent(MotionEvent event) {
     	int action = event.getAction();
     	int currentY = (int) event.getY();
@@ -90,21 +96,34 @@ public class PullView extends FrameLayout {
     	case MotionEvent.ACTION_MOVE:
     		mDeltaY = mStartY - currentY;
     		scrollTo(0, mDeltaY);
-    		float alpha = 1 - mDeltaY / LEN;
-    		setAlpha(alpha);
     		break;
     	case MotionEvent.ACTION_UP:
     		mTouchState = TOUCH_STATE_REST;
     		
     		if(mDeltaY > LEN) {
-				MainActivity act = (MainActivity) getContext();
-				act.finish();
+    			mFinish = true;
+    			startBounceAnim(this.getScrollY(), mChildHeight - this.getScrollY(), mAnimTime);
     		}else {
-    			startBounceAnim(this.getScrollY(), -this.getScrollY(), 1000);
+    			startBounceAnim(this.getScrollY(), -this.getScrollY(), mAnimTime);
     		}
     		break;
     	}
 		return false;
     }
+
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    	super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    	mChildHeight = getMeasuredHeight();
+    	Log.i("peter", "height=" + mChildHeight);
+        setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec),
+                getDefaultSize(mChildHeight * 2, heightMeasureSpec));
+        getChildAt(0).measure(widthMeasureSpec, heightMeasureSpec);
+    }
+    
+	@Override
+	protected void onLayout(boolean changed, int l, int t, int r, int b) {
+		getChildAt(0).layout(l, t, r, b);
+		getChildAt(1).layout(l, t + mChildHeight, r, b + mChildHeight);
+	}
 	
 }
