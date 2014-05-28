@@ -10,7 +10,9 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-
+   
+    <permission android:protectionLevel="normal" android:name="a.b.c"></permission>
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -27,8 +29,13 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".LockService" >
+        <service
+            android:name=".LockService"
+            android:exported="true" 
+            android:permission="a.b.c">
         </service>
+        
     </application>
+    
 
 </manifest>

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
+import android.util.Log;
 
 public class LockService extends Service {
 
@@ -15,6 +16,7 @@ public class LockService extends Service {
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		Log.i("peter", "onStartCommand");
 		return Service.START_STICKY;
 	}
 
