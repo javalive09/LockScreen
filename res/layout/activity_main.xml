@@ -31,6 +31,17 @@
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:typeface="monospace" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/time"
+            android:gravity="center"
+            android:text="上滑解锁"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:typeface="monospace" />
     </RelativeLayout>
 
     <View
