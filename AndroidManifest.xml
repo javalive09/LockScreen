@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lockscreen"
+    package="com.peter.lockscreen"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-   
-    <permission android:protectionLevel="normal" android:name="a.b.c"></permission>
-    
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <permission
+        android:name="a.b.c"
+        android:protectionLevel="normal" >
+    </permission>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <activity
-            android:name="com.lockscreen.MainActivity"
+            android:name="com.peter.lockscreen.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            android:theme="@android:style/Theme.NoDisplay" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,12 +35,17 @@
         </activity>
 
         <service
-            android:name=".LockService"
-            android:exported="true" 
-            android:permission="a.b.c">
+            android:name="com.peter.lockscreen.LockService"
+            android:exported="true"
+            android:permission="a.b.c" >
         </service>
-        
+
+        <receiver
+            android:name="com.peter.lockscreen.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
-    
 
 </manifest>

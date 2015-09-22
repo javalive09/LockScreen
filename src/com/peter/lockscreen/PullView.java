@@ -1,4 +1,4 @@
-package com.lockscreen;
+package com.peter.lockscreen;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,7 +7,6 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
@@ -18,7 +17,7 @@ public class PullView extends ViewGroup {
 	private VelocityTracker mVelocityTracker = null;
 	private static final int TOUCH_STATE_REST = 0;
 	private static final int TOUCH_STATE_SCROLLING = 1;
-	private static final int VELOCITY_BOUNDRY = -5000;
+	private static final int VELOCITY_BOUNDRY = -4700;
 	private int mTouchState = TOUCH_STATE_REST;
 	private static final int mAnimTime = 600;
 	private boolean mFinish = false;
@@ -38,7 +37,7 @@ public class PullView extends ViewGroup {
     }
 
     private void init() {
-    	Interpolator polator = new BounceInterpolator();
+    	Interpolator polator = new EaseOutExpoInterpolator();
 		mScroller = new Scroller(getContext(), polator);
 		mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
     }
@@ -58,7 +57,7 @@ public class PullView extends ViewGroup {
 			invalidate();
 		}else if(mFinish) {
 			MainActivity act = (MainActivity) getContext();
-			act.finish();
+			act.doFinish();
 		}
 	}
 	
@@ -109,7 +108,7 @@ public class PullView extends ViewGroup {
 			velocityTracker.computeCurrentVelocity(1000);
 			int velocityY = (int) velocityTracker.getYVelocity();
     		
-    		if(velocityY < VELOCITY_BOUNDRY|| mDeltaY > mChildHeight/2) {
+    		if(velocityY < VELOCITY_BOUNDRY || mDeltaY > mChildHeight/3) {
     			mFinish = true;
     			startBounceAnim(this.getScrollY(), mChildHeight - this.getScrollY(), mAnimTime);
     		}else {

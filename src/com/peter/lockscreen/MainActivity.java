@@ -1,4 +1,4 @@
-package com.lockscreen;
+package com.peter.lockscreen;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -77,12 +77,16 @@ public class MainActivity extends Activity {
         mWindowManager.addView(mView, params); 
     }
 
-    public void finish() {
-    	mUpdateTime = false;
-    	mWindowManager.removeView(mView);
-    	super.finish();
+    public void doFinish() {
+    	mView.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				mUpdateTime = false;
+		    	mWindowManager.removeView(mView);
+		    	finish();
+			}
+		});
     }
-    
-    
     
 }

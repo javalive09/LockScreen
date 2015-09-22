@@ -1,4 +1,4 @@
-<com.lockscreen.PullView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.peter.lockscreen.PullView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
@@ -26,6 +26,7 @@
             android:id="@+id/date"
             android:layout_width="match_parent"
             android:layout_height="30dp"
+            android:layout_marginTop="20dp"
             android:layout_below="@id/time"
             android:gravity="center"
             android:textColor="@android:color/white"
@@ -40,7 +41,7 @@
             android:gravity="center"
             android:text="上滑解锁"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
+            android:textSize="25sp"
             android:typeface="monospace" />
     </RelativeLayout>
 
@@ -49,4 +50,4 @@
         android:layout_height="match_parent"
         android:background="@android:color/transparent" />
 
-</com.lockscreen.PullView>
+</com.peter.lockscreen.PullView>

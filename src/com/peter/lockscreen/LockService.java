@@ -1,5 +1,7 @@
-package com.lockscreen;
+package com.peter.lockscreen;
 
+import android.app.KeyguardManager;
+import android.app.KeyguardManager.KeyguardLock;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,6 +10,7 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 
+@SuppressWarnings("deprecation")
 public class LockService extends Service {
 
 	@Override
@@ -33,6 +36,10 @@ public class LockService extends Service {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if(action.equals("android.intent.action.SCREEN_OFF")) {
+				KeyguardManager keyguardManager = (KeyguardManager)context.getSystemService(Context.KEYGUARD_SERVICE);
+				KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("");
+				keyguardLock.disableKeyguard();//解锁系统锁屏
+				
 				Intent in = new Intent(context, MainActivity.class);
 				in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(in);
